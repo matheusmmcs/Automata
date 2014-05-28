@@ -1,0 +1,29 @@
+.automatus-spec-area {
+	width: 100%;
+	display: none;
+}
+
+.automatus-spec-area > div {
+	display: inline-block;
+}
+
+.automatus-spec-area textarea {
+	width: 300px;
+	height: 150px;
+}
+
+.automatus-credits-area {
+	width: 100%;
+	display: none;
+}
+
+.automatus-credits-area img {
+	width: 250px;
+	height: 300px;
+}
+
+.automatus-credits-area span {
+	font-size: 33px;
+	margin-left: 20px;
+	margin-right: 30px;
+}

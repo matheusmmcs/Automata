@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	// ### Specify ###
+	
 	// Div onde se pode especificar um automato atraves de texto
 	var divSpec = $(".automatus-spec-area");
 	var specArea = divSpec.find("textarea");
@@ -26,6 +28,18 @@ $(document).ready(function() {
 		}
 		
 		fillNFABySpec(valueSpec);
+	});
+	
+	// ### Credits ###
+	
+	var divCredits = $(".automatus-credits-area");
+	
+	$(".button.credits-area").click(function() {
+		if (divCredits.is(":visible")) {
+			divCredits.hide();
+		} else {
+			divCredits.show();
+		}
 	});
 });
 

@@ -7,7 +7,7 @@
         <link href='css/style.css' rel='stylesheet' />
         <link href='css/runner.css' rel='stylesheet' />
         <link href='css/share.css' rel='stylesheet' />
-        <link href='css/spec_area.css' rel='stylesheet' />
+        <link href='css/automatus.css' rel='stylesheet' />
     </head>
     <body>
         <header>
@@ -25,6 +25,7 @@
                 <li class='run button'><a href='#'><span></span>Run</a></li>
                 <li class='share button'><a href='#'><span></span>Share</a></li>
                 <li class='spec-area button'><a href='#'><span></span>Specify Automatus</a></li>
+                <li class='credits-area button'><a href='#'><span></span>Credits</a></li>
             </ol>
             <!--
             <ol class='account'>
@@ -46,6 +47,11 @@ t s1 s2
 				<div>
 					<span class='spec-area-confirm button'><a href='#'><span></span>Confirm</a></span>
 				</div>            
+            </div>
+            <div class="automatus-credits-area">
+            	<img src="images/pedro.jpg"/><span>Pedro</span>
+            	<img src="images/matheus.jpg"/><span>Matheus</span>
+            	<img src="images/jeff.jpg"/><span>Jefferson</span>
             </div>
         </header>
         <div class='runner'>
@@ -93,6 +99,6 @@ t s1 s2
         <script src='js/runner.js'></script>
         <script src='js/ui.js'></script>
         
-        <script src='js/specify-automatus.js'></script>
+        <script src='js/automatus.js'></script>
     </body>
 </html>

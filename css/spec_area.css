@@ -1,0 +1,13 @@
+.automatus-spec-area {
+	width: 100%;
+	display: none;
+}
+
+.automatus-spec-area > div {
+	display: inline-block;
+}
+
+.automatus-spec-area textarea {
+	width: 300px;
+	height: 150px;
+}

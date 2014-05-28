@@ -7,6 +7,7 @@
         <link href='css/style.css' rel='stylesheet' />
         <link href='css/runner.css' rel='stylesheet' />
         <link href='css/share.css' rel='stylesheet' />
+        <link href='css/spec_area.css' rel='stylesheet' />
     </head>
     <body>
         <header>
@@ -19,10 +20,11 @@
                 and try again.</p>
             </noscript>
             <ol class='toolbar'>
-                <li class='selected move button'><a href=''><span></span>Move states</a></li>
-                <li class='transition button'><a href=''><span></span>Create transition</a></li>
-                <li class='run button'><a href=''><span></span>Run</a></li>
-                <li class='share button'><a href=''><span></span>Share</a></li>
+                <li class='selected move button'><a href='#'><span></span>Move states</a></li>
+                <li class='transition button'><a href='#'><span></span>Create transition</a></li>
+                <li class='run button'><a href='#'><span></span>Run</a></li>
+                <li class='share button'><a href='#'><span></span>Share</a></li>
+                <li class='spec-area button'><a href='#'><span></span>Specify Automatus</a></li>
             </ol>
             <!--
             <ol class='account'>
@@ -31,6 +33,20 @@
             </ol>
             -->
             <div class='eof'></div>
+            <div class="automatus-spec-area">
+            	<div>
+            		<textarea rows="5" cols="">
+s s0 -i
+s s1
+s s2 -f
+t s0 s1 a
+t s1 s2
+            		</textarea>
+            	</div>
+				<div>
+					<span class='spec-area-confirm button'><a href='#'><span></span>Confirm</a></span>
+				</div>            
+            </div>
         </header>
         <div class='runner'>
             <div class='window'>
@@ -76,5 +92,7 @@
         <script src='js/hidpi-canvas.min.js'></script>
         <script src='js/runner.js'></script>
         <script src='js/ui.js'></script>
+        
+        <script src='js/specify-automatus.js'></script>
     </body>
 </html>

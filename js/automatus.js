@@ -35,9 +35,8 @@ $(document).ready(function() {
 	});
 	
 	// ### Operation - Trim ###
-	
 	$(".operation-trim").click(function() {
-		operationAcc();
+		operationTrim();
 	});
 });
 
@@ -186,10 +185,39 @@ function getInfoOpeCoAcc() {
 	return automatusInfo;
 }
 
-function operationAcc() {
-	var automatusInfo = getInfoOpeAcc();
-//	var automatusInfo = getInfoOpeCoAcc();
-	automatusInfo['keepPositions'] = true;
+function operationTrim() {
+	var automatusInfoAcc = getInfoOpeAcc();
+	var automatusInfoCoAcc = getInfoOpeCoAcc();
+	
+	var automatusInfo = {'states': {}, 'transitions': [], 'keepPositions': true};
+	for (var state in automatusInfoAcc.states) {
+		var coAccState = automatusInfoCoAcc.states[state];
+		if (coAccState) {
+			automatusInfo.states[state] = coAccState; 
+		}
+	}
+	
+	var allTransitions = [].concat(automatusInfoAcc.transitions).concat(automatusInfoCoAcc.transitions);
+	var auxTransitions = {};
+	
+	for (var index in allTransitions) {
+		var fromT = allTransitions[index][0];
+		var viaT = allTransitions[index][1];
+		var toT = allTransitions[index][2];
+		
+		if (automatusInfo.states[fromT] && automatusInfo.states[toT] && (!auxTransitions[fromT] || !auxTransitions[fromT][viaT] || !auxTransitions[fromT][viaT][toT])) {
+			if (!auxTransitions[fromT]) {
+				auxTransitions[fromT] = {};
+				auxTransitions[fromT][viaT] = {};
+			} else if (!auxTransitions[fromT][viaT]) {
+				auxTransitions[fromT][viaT] = {};
+			}
+			
+			auxTransitions[fromT][viaT][toT] = true;
+			
+			automatusInfo.transitions.push([fromT, viaT, toT]);
+		}
+	}
 
 	drawAutomatus(automatusInfo);
 }

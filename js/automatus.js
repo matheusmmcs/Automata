@@ -19,15 +19,6 @@ $(document).ready(function() {
 		var valueSpec = specArea.val();
 		specArea.val("");
 		
-		var statesList = [];
-		for (var key in nfa.states) {
-			statesList[statesList.length] = key;
-		}
-		
-		for (var index in statesList) {
-			nfa.deleteState(statesList[index]);
-		}
-		
 		fillNFABySpec(valueSpec);
 	});
 	
@@ -42,11 +33,18 @@ $(document).ready(function() {
 			divCredits.show();
 		}
 	});
+	
+	// ### Operation - Trim ###
+	
+	$(".operation-trim").click(function() {
+		operationAcc();
+	});
 });
 
 function fillNFABySpec(spec) {
 	var specLines = spec.split("\n");
-	var allStates = [];
+	
+	var automatusInfo = {'states': {}, 'transitions': []};
 	
 	for (var i = 0, length = specLines.length; i < length; i++) {
 		var line = specLines[i].trim();
@@ -54,14 +52,13 @@ function fillNFABySpec(spec) {
 		
 		if (lineSplit[0] == "s") {
 			var state = lineSplit[1];
-			nfa.addState(state);
-			allStates[allStates.length] = state;
+			automatusInfo['states'][state] = {'initial': false, 'final': false};
 			
 			if (lineSplit.length == 3) {
 				if (lineSplit[2] == "-i") {
-					nfa.startState = state;
+					automatusInfo['states'][state]['initial'] = true;
 				} else if (lineSplit[2] == "-f") {
-					nfa.addAcceptingState(state);
+					automatusInfo['states'][state]['final'] = true;
 				}
 			}
 		} else if (lineSplit[0] == "t") {
@@ -69,12 +66,49 @@ function fillNFABySpec(spec) {
 			var state2 = lineSplit[2];
 			
 			if (lineSplit.length == 4) {
-				nfa.addTransition(state1, lineSplit[3], state2);
+				automatusInfo['transitions'].push([state1, lineSplit[3], state2]);
 			} else {
-				nfa.addTransition(state1, "ε", state2);
+				automatusInfo['transitions'].push([state1, "ε", state2]);
 			}
 		}
 	}
+	
+	drawAutomatus(automatusInfo);
+}
+
+function clearAutomatus() {
+	var statesList = [];
+	for (var key in nfa.states) {
+		statesList[statesList.length] = key;
+	}
+	
+	for (var index in statesList) {
+		nfa.deleteState(statesList[index]);
+	}
+}
+
+function drawAutomatus(automatusInfo) {
+	clearAutomatus();
+	
+	var automatusInfoStates = automatusInfo['states'];
+	for (var state in automatusInfoStates) {
+		nfa.addState(state);
+		
+		if (automatusInfoStates[state].initial) {
+			nfa.startState = state;
+		}
+		if (automatusInfoStates[state].final) {
+			nfa.addAcceptingState(state);
+		}
+	}
+	
+	var automatusInfoTransitions = automatusInfo['transitions'];
+	for (var index in automatusInfoTransitions) {
+		var trans = automatusInfoTransitions[index];
+		nfa.addTransition(trans[0], trans[1], trans[2]);
+	}
+	
+	var allStates = Object.keys(automatusInfoStates);
 	
 	var radiusSize = 100 + 10*allStates.length;
 	var angleGap = 360 / allStates.length;
@@ -83,10 +117,31 @@ function fillNFABySpec(spec) {
 	for (var index = 0; index < allStates.length; index++) {
 		var state = allStates[index];
 		var currentAngle = 180 - index * angleGap;
-		console.log(currentAngle);
 		var radians = currentAngle * (Math.PI / 180);
 		
 		nfaview.states[state].position = new Vector(centerVector.x + radiusSize * (Math.cos(radians)), centerVector.y + radiusSize * (Math.sin(radians)));
 	}
+}
+
+function operationAcc() {
+	var startState = nfa.startState;
+	var automatusInfo = {'states': {}, 'transitions': []};
+	automatusInfo['states'][startState] = {'initial': true, 'final': nfa.accept[startState]};
 	
+	function addReachables(state) {
+		var fromState = nfa.transitions[state];
+		for (var key in fromState) {
+			for (var key2 in fromState[key]) {
+				if (!automatusInfo['states'][key2]) {
+					automatusInfo['states'][key2] = {'initial': false, 'final': nfa.accept[key2]};  
+					automatusInfo['transitions'].push([state, key, key2]);
+					
+					addReachables(key2);
+				}
+			}
+		}
+	}
+	addReachables(startState);
+
+	drawAutomatus(automatusInfo);
 }

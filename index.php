@@ -29,7 +29,7 @@
             <h1>Algorithms</h1>
             <ol class='toolbar'>
                 <li class='run'><a href=''>AFN -> AFD</a></li>
-                <li class='run'><a href=''>Trim</a></li>
+                <li class='operation-trim'><a href='#'>Trim</a></li>
                 <li class='run'><a href=''>Parallel Composition</a></li>
                 <li class='run'><a href=''>Product Operation</a></li>
                 <li class='run'><a href=''>Minimization</a></li>

@@ -90,6 +90,14 @@ function clearAutomatus() {
 function drawAutomatus(automatusInfo) {
 	var initX = 350;
 
+	var cachePositions = null;
+	if (automatusInfo['keepPositions']) {
+		cachePositions = {};
+		for (var state in nfaview.states) {
+			cachePositions[state] = nfaview.states[state].position;
+		}
+	}
+	
 	clearAutomatus();
 	
 	var automatusInfoStates = automatusInfo['states'];
@@ -121,11 +129,15 @@ function drawAutomatus(automatusInfo) {
 		var currentAngle = 180 - index * angleGap;
 		var radians = currentAngle * (Math.PI / 180);
 		
-		nfaview.states[state].position = new Vector(centerVector.x + radiusSize * (Math.cos(radians)), centerVector.y + radiusSize * (Math.sin(radians)));
+		if (cachePositions) {
+			nfaview.states[state].position = cachePositions[state];
+		} else {
+			nfaview.states[state].position = new Vector(centerVector.x + radiusSize * (Math.cos(radians)), centerVector.y + radiusSize * (Math.sin(radians)));
+		}
 	}
 }
 
-function operationAcc() {
+function getInfoOpeAcc() {
 	var startState = nfa.startState;
 	var automatusInfo = {'states': {}, 'transitions': []};
 	automatusInfo['states'][startState] = {'initial': true, 'final': nfa.accept[startState]};
@@ -144,6 +156,40 @@ function operationAcc() {
 		}
 	}
 	addReachables(startState);
+	
+	return automatusInfo;
+}
+
+function getInfoOpeCoAcc() {
+	var automatusInfo = {'states': {}, 'transitions': []};
+
+	function addReachables(state) {
+		for (var fromTran in nfa.transitions) {
+			for (var viaTran in nfa.transitions[fromTran]) {
+				for (var toTran in nfa.transitions[fromTran][viaTran]) {
+					if (toTran == state && !automatusInfo['states'][fromTran]) {
+						automatusInfo['states'][fromTran] = {'initial': (nfa.startState == fromTran), 'final': false};
+						automatusInfo['transitions'].push([fromTran, viaTran, toTran]);
+						
+						addReachables(fromTran);
+					}
+				}
+			}
+		}
+	}
+	
+	for (var finalState in nfa.accept) {
+		automatusInfo['states'][finalState] = {'initial': (nfa.startState == finalState), 'final': true};
+		addReachables(finalState);
+	}
+	
+	return automatusInfo;
+}
+
+function operationAcc() {
+	var automatusInfo = getInfoOpeAcc();
+//	var automatusInfo = getInfoOpeCoAcc();
+	automatusInfo['keepPositions'] = true;
 
 	drawAutomatus(automatusInfo);
 }

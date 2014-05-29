@@ -387,7 +387,7 @@ NFAEditor.prototype = {
                     var client = new Vector( e.clientX, e.clientY );
                     var d = client.minus( oldClient );
 
-                    transitionView.position = new Vector ( e.clientX, e.clientY - 39 ); // TODO fix this to be more general...
+                    transitionView.position = new Vector ( e.clientX, e.clientY ); // TODO fix this to be more general...
                 }
                 function up( e ) {
                     document.removeEventListener( 'mouseup', up );
@@ -496,7 +496,7 @@ NFAEditor.prototype = {
             self.inputSubmit();
 
             if ( self.mode == 'moveState' && !renderer.freezeEditor ) {
-                var client = new Vector( e.clientX, e.clientY - 39 ); //TODO find an more general type...
+                var client = new Vector( e.clientX, e.clientY ); //TODO find an more general type...
 
                 self.dragging = true;
 
@@ -505,7 +505,7 @@ NFAEditor.prototype = {
                 renderer.selectionRectTo = client;
 
                 function move( e ) {
-                    var newClient = new Vector( e.clientX, e.clientY - 39 ); //TODO find an more general type...
+                    var newClient = new Vector( e.clientX, e.clientY ); //TODO find an more general type...
 
                     self.selectedRectStates = renderer.selectedStates;
                     renderer.selectionRectTo = newClient;

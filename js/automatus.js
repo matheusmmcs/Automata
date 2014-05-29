@@ -6,7 +6,8 @@ $(document).ready(function() {
 	var specArea = divSpec.find("textarea");
 	var specConfirm = divSpec.find(".spec-area-confirm a");
 	
-	$(".button.spec-area").click(function() {
+	$(".spec-area").click(function() {
+		console.log("x")
 		if (divSpec.is(":visible")) {
 			divSpec.hide();
 		} else {

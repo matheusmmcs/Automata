@@ -3,7 +3,7 @@ var UI = {
     ctx: null,
     resize: function() {
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight - 39;
+        this.canvas.height = window.innerHeight;
     },
     init: function() {
         // TODO: nfaview should not be a global variable here

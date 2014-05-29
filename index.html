@@ -7,7 +7,6 @@
         <link href='css/style.css' rel='stylesheet' />
         <link href='css/runner.css' rel='stylesheet' />
         <link href='css/share.css' rel='stylesheet' />
-        <link href='css/automatus.css' rel='stylesheet' />
         <link href='css/font-awesome.min.css' rel='stylesheet' />
     </head>
     <body>
@@ -24,7 +23,6 @@
                 <li class='selected move'><a href=''><i class="fa fa-arrows"></i> Move States</a></li>
                 <li class='transition'><a href=''><i class="fa fa-arrow-right"></i> Create Transition</a></li>
                 <li class='run'><a href=''><i class="fa fa-play"></i> Run</a></li>
-                <li class='credits-area'><a href='#'><i class="fa fa-group"></i> Credits</a></li>
             </ol>
             <h1>Algorithms</h1>
             <ol class='toolbar'>
@@ -33,6 +31,10 @@
                 <li class='run'><a href=''>Parallel Composition</a></li>
                 <li class='run'><a href=''>Product Operation</a></li>
                 <li class='run'><a href=''>Minimization</a></li>
+            </ol>
+            <h1>Extras</h1>
+            <ol class='toolbar'>
+                <li class='credits-area'><a href='#'><i class="fa fa-group"></i> Credits</a></li>
             </ol>
         </aside>
 
@@ -48,7 +50,7 @@ t s1 s2
                 </textarea>
             </div>
             <div>
-                <span class='spec-area-confirm button'><a href='#'><span></span>Confirm</a></span>
+                <span class='spec-area-confirm'><a href='#' class="btn"><span></span>Confirm</a></span>
             </div>            
         </div>
         <div class="automatus-credits-area">
@@ -79,17 +81,6 @@ t s1 s2
             <canvas width='800' height='800'></canvas>
         </div>
 
-        <div id='sharer'>
-            <span class='icon'>▲</span>
-            <div id='share'>
-                <a href='' class='close' title='Close'></a>
-                <label>Link to your automaton</label>
-                <div class=''>
-                    <input type='text' id='url' />
-                </div>
-            </div>
-        </div>
-
         <script src='js/debug.js'></script>
         <script src='js/object.js'></script>
         <script src='js/eventemitter.js'></script>
@@ -105,11 +96,7 @@ t s1 s2
         <script src='js/hidpi-canvas.min.js'></script>
         <script src='js/runner.js'></script>
         <script src='js/ui.js'></script>
-<<<<<<< Updated upstream:index.php
-        
         <script src='js/automatus.js'></script>
-=======
-
         <script type="text/javascript">
             (function($){
                 $(document).ready(function(){
@@ -127,6 +114,5 @@ t s1 s2
                 });
             })(jQuery);
         </script>
->>>>>>> Stashed changes:index.html
     </body>
 </html>

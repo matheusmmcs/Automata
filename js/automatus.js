@@ -88,6 +88,8 @@ function clearAutomatus() {
 }
 
 function drawAutomatus(automatusInfo) {
+	var initX = 350;
+
 	clearAutomatus();
 	
 	var automatusInfoStates = automatusInfo['states'];
@@ -112,7 +114,7 @@ function drawAutomatus(automatusInfo) {
 	
 	var radiusSize = 100 + 10*allStates.length;
 	var angleGap = 360 / allStates.length;
-	var centerVector = new Vector(100 + radiusSize, 300);
+	var centerVector = new Vector(initX + radiusSize, 300);
 
 	for (var index = 0; index < allStates.length; index++) {
 		var state = allStates[index];

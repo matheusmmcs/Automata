@@ -218,12 +218,12 @@ NFARenderer.prototype = {
             }
         }
         else {
-            radgrad.addColorStop( 0, '#fff' );
-            radgrad.addColorStop( 0.8, '#e8ecf0' );
-            radgrad.addColorStop( 1, '#fff' );
+            radgrad.addColorStop( 0, '#eee' );
+            radgrad.addColorStop( 0.8, '#ddd' );
+            radgrad.addColorStop( 1, '#eee' );
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 2;
-            ctx.shadowColor = 'rgba( 0, 0, 0, 0.3 )';
+            ctx.shadowColor = 'rgba( 0, 0, 0, 0.1 )';
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
             ctx.shadowBlur = 5;

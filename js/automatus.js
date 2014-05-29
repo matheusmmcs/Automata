@@ -45,6 +45,8 @@ $(document).ready(function() {
 
 function fillNFABySpec(spec) {
 	var specLines = spec.split("\n");
+	var allStates = [];
+	
 	for (var i = 0, length = specLines.length; i < length; i++) {
 		var line = specLines[i].trim();
 		var lineSplit = line.split(" ");
@@ -52,8 +54,7 @@ function fillNFABySpec(spec) {
 		if (lineSplit[0] == "s") {
 			var state = lineSplit[1];
 			nfa.addState(state);
-			
-			nfaview.states[state].position = new Vector( 100 + 200 * i, 200 );
+			allStates[allStates.length] = state;
 			
 			if (lineSplit.length == 3) {
 				if (lineSplit[2] == "-i") {
@@ -72,6 +73,19 @@ function fillNFABySpec(spec) {
 				nfa.addTransition(state1, "ε", state2);
 			}
 		}
+	}
+	
+	var radiusSize = 100 + 10*allStates.length;
+	var angleGap = 360 / allStates.length;
+	var centerVector = new Vector(100 + radiusSize, 300);
+
+	for (var index = 0; index < allStates.length; index++) {
+		var state = allStates[index];
+		var currentAngle = 180 - index * angleGap;
+		console.log(currentAngle);
+		var radians = currentAngle * (Math.PI / 180);
+		
+		nfaview.states[state].position = new Vector(centerVector.x + radiusSize * (Math.cos(radians)), centerVector.y + radiusSize * (Math.sin(radians)));
 	}
 	
 }

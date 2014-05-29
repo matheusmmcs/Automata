@@ -105,10 +105,8 @@ t s1 s2
         <script src='js/hidpi-canvas.min.js'></script>
         <script src='js/runner.js'></script>
         <script src='js/ui.js'></script>
-<<<<<<< Updated upstream:index.php
         
         <script src='js/automatus.js'></script>
-=======
 
         <script type="text/javascript">
             (function($){
@@ -127,6 +125,5 @@ t s1 s2
                 });
             })(jQuery);
         </script>
->>>>>>> Stashed changes:index.html
     </body>
 </html>

@@ -38,6 +38,11 @@ $(document).ready(function() {
 	$(".operation-trim").click(function() {
 		operationTrim();
 	});
+	
+	// ### Operation - Product ###
+	$(".operation-product").click(function() {
+		operationProduct();
+	});
 });
 
 function fillNFABySpec(spec) {
@@ -258,6 +263,40 @@ var automatusForProductBuffer = null;
 function operationProduct() {
 	if (automatusForProductBuffer) {
 		var currentInfo = getCurrentInfo();
+		
+		var automatusInfo = {'states': {}, 'transitions': []};
+		
+		function getStateInfo(state1, state2) {
+			var stateInfo = {'initial': false, 'final': false};
+			if (automatusForProductBuffer.states[state1]['initial'] && currentInfo.states[state2]['initial']) {
+				stateInfo['initial'] = true;
+			}
+			if (automatusForProductBuffer.states[state1]['final'] && currentInfo.states[state2]['final']) {
+				stateInfo['final'] = true;
+			}
+			
+			return stateInfo;
+		}
+		
+		for (var state1 in automatusForProductBuffer.states) {
+			for (var state2 in currentInfo.states) {
+				for (var trans1 in automatusForProductBuffer.transitions[state1]) {
+					if (currentInfo.transitions[state2][trans1]) {
+						var mixState1 = "( " + state1 + ", " + state2 + " )";
+						automatusInfo.states[mixState1] = getStateInfo(state1, state2);
+						
+						var toState1 = Object.keys(automatusForProductBuffer.transitions[state1][trans1])[0];
+						var toState2 = Object.keys(currentInfo.transitions[state2][trans1])[0];
+						var mixState2 = "( " + toState1 + ", " + toState2 + " )";
+						automatusInfo.states[mixState2] = getStateInfo(toState1, toState2);
+						
+						automatusInfo.transitions.push([mixState1, trans1, mixState2]);
+					}
+				}
+			}
+		}
+		
+		drawAutomatus(automatusInfo);
 	} else {
 		automatusForProductBuffer = getCurrentInfo();
 		clearAutomatus();

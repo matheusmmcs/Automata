@@ -319,6 +319,8 @@ function operationProduct() {
 		
 		drawAutomatus(automatusInfo);
 		drawAutomatus(getInfoOpeAcc());
+		
+		automatusForProductBuffer = null;
 	} else {
 		automatusForProductBuffer = getCurrentInfo();
 		clearAutomatus();
@@ -399,6 +401,8 @@ function operationParallel() {
 		
 		drawAutomatus(automatusInfo);
 		drawAutomatus(getInfoOpeAcc());
+		
+		automatusForParallelBuffer = null;
 	} else {
 		automatusForParallelBuffer = getCurrentInfo();
 		clearAutomatus();

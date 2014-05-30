@@ -7,7 +7,6 @@
         <link href='css/style.css' rel='stylesheet' />
         <link href='css/runner.css' rel='stylesheet' />
         <link href='css/share.css' rel='stylesheet' />
-        <link href='css/automatus.css' rel='stylesheet' />
         <link href='css/font-awesome.min.css' rel='stylesheet' />
     </head>
     <body>
@@ -20,36 +19,36 @@
             <h1 class="logo">Automatus</h1>
             <h1>Configuration</h1>
             <ol class='toolbar'>
-                <li class='spec-area'><a href='#'><i class="fa fa-file"></i> Open Automatus</a></li>
-                <li class='selected move'><a href=''><i class="fa fa-arrows"></i> Move States</a></li>
-                <li class='transition'><a href=''><i class="fa fa-arrow-right"></i> Create Transition</a></li>
-                <li class='run'><a href=''><i class="fa fa-play"></i> Run</a></li>
-                <li class='credits-area'><a href='#'><i class="fa fa-group"></i> Credits</a></li>
+                <li class='spec-area'><a href='#'><i class="fa fa-terminal"></i> Open Automatus</a></li>
+                <li class='selected move'><a href='#'><i class="fa fa-arrows"></i> Move States</a></li>
+                <li class='transition'><a href='#'><i class="fa fa-arrow-right"></i> Create Transition</a></li>
+                <li class='run'><a href='#'><i class="fa fa-play"></i> Run</a></li>
             </ol>
             <h1>Algorithms</h1>
             <ol class='toolbar'>
-                <li class='run'><a href=''>AFN -> AFD</a></li>
+                <li class='afn-afd'><a href='#'>AFN -> AFD</a></li>
                 <li class='operation-trim'><a href='#'>Trim</a></li>
-                <li class='run'><a href=''>Parallel Composition</a></li>
+                <li class='run'><a href='#'>Parallel Composition</a></li>
                 <li class='operation-product'><a href='#'>Product Operation</a></li>
-                <li class='run'><a href=''>Minimization</a></li>
+                <li class='minimization'><a href='#'>Minimization</a></li>
+            </ol>
+            <h1>Extras</h1>
+            <ol class='toolbar'>
+                <li class='credits-area'><a href='#'><i class="fa fa-group"></i> Credits</a></li>
             </ol>
         </aside>
 
 
         <div class="automatus-spec-area">
-            <div>
-                <textarea rows="5" cols="">
+            <i class="close spec-area fa fa-times"></i>
+            <textarea rows="5" cols="">
 s s0 -i
 s s1
 s s2 -f
 t s0 s1 a
 t s1 s2
-                </textarea>
-            </div>
-            <div>
-                <span class='spec-area-confirm button'><a href='#'><span></span>Confirm</a></span>
-            </div>            
+            </textarea>
+            <span class='spec-area-confirm'><a href='#' class="btn"><span></span>Confirm</a></span>
         </div>
         <div class="automatus-credits-area">
             <img src="images/pedro.jpg"/><span>Pedro</span>
@@ -79,17 +78,6 @@ t s1 s2
             <canvas width='800' height='800'></canvas>
         </div>
 
-        <div id='sharer'>
-            <span class='icon'>▲</span>
-            <div id='share'>
-                <a href='' class='close' title='Close'></a>
-                <label>Link to your automaton</label>
-                <div class=''>
-                    <input type='text' id='url' />
-                </div>
-            </div>
-        </div>
-
         <script src='js/debug.js'></script>
         <script src='js/object.js'></script>
         <script src='js/eventemitter.js'></script>
@@ -105,9 +93,7 @@ t s1 s2
         <script src='js/hidpi-canvas.min.js'></script>
         <script src='js/runner.js'></script>
         <script src='js/ui.js'></script>
-        
         <script src='js/automatus.js'></script>
-
         <script type="text/javascript">
             (function($){
                 $(document).ready(function(){

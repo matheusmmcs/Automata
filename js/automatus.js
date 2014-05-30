@@ -55,6 +55,11 @@ $(document).ready(function() {
 	$(".operation-parallel-cache").click(function() {
 		auxClearOperationParallel();
 	});
+
+	// ### Operation - Product ###
+	$(".afn-afd").click(function() {
+		operationAfnToAfd();
+	});
 });
 
 function fillNFABySpec(spec) {
@@ -157,10 +162,11 @@ function drawAutomatus(automatusInfo) {
 }
 
 function getCurrentInfo() {
-	var automatusInfo = {'states': {}, 'transitions': [], '_transitions': {}};
+	var automatusInfo = {'states': {}, 'transitions': [], '_transitions': {}, 'statesLength': 0};
 	
 	for (var state in nfa.states) {
 		automatusInfo.states[state] = {'initial': (state == nfa.startState), 'final': nfa.accept[state]};
+		automatusInfo.statesLength++;
 	}
 	
 	var _transitions = automatusInfo['_transitions'];
@@ -435,3 +441,97 @@ function auxClearOperationParallel() {
 	
 	$(".operation-parallel a").text("Parallel Composition 1");
 }
+
+function operationAfnToAfd() {
+		var cAutomatus = getCurrentInfo(),
+			cStates = cAutomatus['states'],
+			cTransitions = cAutomatus['_transitions'];
+
+		console.log(cAutomatus, cTransitions);
+
+		var toVisit = [], visited = {};
+		var automata = {'states': {}, 'transitions': [], 'keepPositions': false};
+
+		//busca o no inicial
+		for(var i in cStates){
+			if(cStates[i] && cStates[i]['initial']){
+				toVisit.push(i);
+				break;
+			}
+		}
+
+		//construindo o alfabeto
+		var alphabet = {};
+		for (var s in cStates) {
+			for (var t in cTransitions[s]) {
+				alphabet[t] = true;
+			}
+		}
+
+		while(toVisit.length > 0){
+			var state = toVisit.pop();
+			visited[state] = true;
+			automata.states[state] = getStateConfiguration(state, cStates);
+
+			var states =  getStatesByUniqueState(state);
+			//caso seja um estado composto, percorro todos os estados, buscando as transicoes e os estados que atinge
+			var transitions = {};
+			for(var s in states){
+				s = states[s];
+				for(var t in cTransitions[s]){
+					for(var fs in cTransitions[s][t]){
+						if(cTransitions[s][t][fs]){
+							if (!transitions[t]){
+								transitions[t] = [fs];
+							}else{
+								transitions[t].push(fs);
+							}
+						}
+					}
+				}
+			}
+
+			//itero as transicoes, inserindo estas transicoes no novo automato e verificando se os novos estados ja foram visitados
+			for(var t in transitions){
+				var newState = getUniqueState(transitions[t]);
+				automata.transitions.push([state, t, newState]);
+
+				if(!visited[newState]){
+					toVisit.push(newState);
+				}
+			}
+			console.log(automata);
+		}
+
+		drawAutomatus(automata);
+}
+
+function getUniqueState(states){
+	var res = "";
+	states.sort();
+	for(var i in states){
+		res += states[i];
+		if(i < states.length-1){
+			res += "-";
+		}
+	}
+	return res;
+}
+
+function getStatesByUniqueState(uniqueState){
+	return uniqueState.split("-");;
+}
+
+// s-s1-s2  ->  s, s1, s2
+function getStateConfiguration(state, cStates){
+	states = getStatesByUniqueState(state);
+	var ini = true, fin = false;
+	for(var i in states){
+		var s = cStates[states[i]];
+		ini = ini && (s['initial'] != null && s['initial'] != undefined ? s['initial'] : false);
+		fin = fin || (s['final'] != null && s['final'] != undefined ? s['final'] : false);
+	}
+	return {'initial':ini, 'final':fin};
+}
+
+//operationAfnToAfd();

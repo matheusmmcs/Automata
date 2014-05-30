@@ -43,10 +43,17 @@ $(document).ready(function() {
 	$(".operation-product").click(function() {
 		operationProduct();
 	});
+	$(".operation-product-cache").click(function() {
+		auxClearOperationProduct();
+	});
+	
 	
 	// ### Operation - Parallel ###
 	$(".operation-parallel").click(function() {
 		operationParallel();
+	});
+	$(".operation-parallel-cache").click(function() {
+		auxClearOperationParallel();
 	});
 });
 
@@ -302,7 +309,7 @@ function operationProduct() {
 		for (var state1 in automatusForProductBuffer.states) {
 			for (var state2 in currentInfo.states) {
 				for (var trans1 in automatusForProductBuffer._transitions[state1]) {
-					if (currentInfo._transitions[state2][trans1]) {
+					if (currentInfo._transitions[state2] && currentInfo._transitions[state2][trans1]) {
 						var mixState1 = state1 + " | " + state2;
 						automatusInfo.states[mixState1] = getStateInfo(state1, state2);
 						
@@ -320,11 +327,21 @@ function operationProduct() {
 		drawAutomatus(automatusInfo);
 		drawAutomatus(getInfoOpeAcc());
 		
-		automatusForProductBuffer = null;
+		auxClearOperationProduct();
 	} else {
 		automatusForProductBuffer = getCurrentInfo();
 		clearAutomatus();
+		
+		$(".operation-product-cache").slideDown();
+		$(".operation-product a").text("Product Operation 2");
 	}
+}
+
+function auxClearOperationProduct() {
+	automatusForProductBuffer = null;
+	$(".operation-product-cache").slideUp();
+	
+	$(".operation-product a").text("Product Operation 1");
 }
 
 var automatusForParallelBuffer = null;
@@ -378,13 +395,13 @@ function operationParallel() {
 					var toState1 = state1;
 					var toState2 = state2;
 					
-					if (automatusForParallelBuffer._transitions[state1][trans]) {
+					if (automatusForParallelBuffer._transitions[state1] && automatusForParallelBuffer._transitions[state1][trans]) {
 						toState1 = Object.keys(automatusForParallelBuffer._transitions[state1][trans])[0];
 					} else if (allTrans1[trans]) {
 						// Continua o for pq o alfabeto do primeiro automato possui o evento
 						continue;
 					}
-					if (currentInfo._transitions[state2][trans]) {
+					if (currentInfo._transitions[state2] && currentInfo._transitions[state2][trans]) {
 						toState2 = Object.keys(currentInfo._transitions[state2][trans])[0];
 					} else if (allTrans2[trans]) {
 						// Continua o for pq o alfabeto do segundo automato possui o evento
@@ -402,9 +419,19 @@ function operationParallel() {
 		drawAutomatus(automatusInfo);
 		drawAutomatus(getInfoOpeAcc());
 		
-		automatusForParallelBuffer = null;
+		auxClearOperationParallel();
 	} else {
 		automatusForParallelBuffer = getCurrentInfo();
 		clearAutomatus();
+		
+		$(".operation-parallel-cache").slideDown();
+		$(".operation-parallel a").text("Parallel Composition 2");
 	}
+}
+
+function auxClearOperationParallel() {
+	automatusForParallelBuffer = null;
+	$(".operation-parallel-cache").slideUp();
+	
+	$(".operation-parallel a").text("Parallel Composition 1");
 }

@@ -185,6 +185,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
     cursor: pointer;
 }
 
+/*
+	Cache style para produto e paralela
+ */
+.operation-cache a {
+	background: #8D1919;
+}
+
+.operation-cache a:hover {
+	background: #7A0000;
+}
+
 .automatus-credits-area {
     width: 100%;
     display: none;

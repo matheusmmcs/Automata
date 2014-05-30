@@ -28,8 +28,10 @@
             <ol class='toolbar'>
                 <li class='afn-afd'><a href='#'>AFN -> AFD</a></li>
                 <li class='operation-trim'><a href='#'>Trim</a></li>
-                <li class='operation-parallel'><a href='#'>Parallel Composition</a></li>
-                <li class='operation-product'><a href='#'>Product Operation</a></li>
+                <li class='operation-parallel'><a href='#'>Parallel Composition 1</a></li>
+                <li class='operation-parallel-cache operation-cache' style="display: none"><a href='#'>Automato 1 Saved (Remove)</a></li>
+                <li class='operation-product'><a href='#'>Product Operation 1</a></li>
+                <li class='operation-product-cache operation-cache' style="display: none"><a href='#'>Automato 1 Saved (Remove</a></li>
                 <li class='minimization'><a href='#'>Minimization</a></li>
             </ol>
             <h1>Extras</h1>

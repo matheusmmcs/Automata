@@ -43,6 +43,11 @@ $(document).ready(function() {
 	$(".operation-product").click(function() {
 		operationProduct();
 	});
+	
+	// ### Operation - Parallel ###
+	$(".operation-parallel").click(function() {
+		operationParallel();
+	});
 });
 
 function fillNFABySpec(spec) {
@@ -316,6 +321,66 @@ function operationProduct() {
 		drawAutomatus(getInfoOpeAcc());
 	} else {
 		automatusForProductBuffer = getCurrentInfo();
+		clearAutomatus();
+	}
+}
+
+var automatusForParallelBuffer = null;
+function operationParallel() {
+	if (automatusForParallelBuffer) {
+		var currentInfo = getCurrentInfo();
+		
+		var automatusInfo = {'states': {}, 'transitions': []};
+		
+		function getStateInfo(state1, state2) {
+			var stateInfo = {'initial': false, 'final': false};
+			if (automatusForParallelBuffer.states[state1]['initial'] && currentInfo.states[state2]['initial']) {
+				stateInfo['initial'] = true;
+			}
+			if (automatusForParallelBuffer.states[state1]['final'] && currentInfo.states[state2]['final']) {
+				stateInfo['final'] = true;
+			}
+			
+			return stateInfo;
+		}
+		
+		for (var state1 in automatusForParallelBuffer.states) {
+			for (var state2 in currentInfo.states) {
+				var mixState1 = state1 + " | " + state2;
+				automatusInfo.states[mixState1] = getStateInfo(state1, state2);
+				
+				for (var trans1 in automatusForParallelBuffer._transitions[state1]) {
+					var toState1 = Object.keys(automatusForParallelBuffer._transitions[state1][trans1])[0];
+					var toState2 = state2;
+					if (currentInfo._transitions[state2][trans1]) {
+						toState2 = currentInfo._transitions[state2][trans1];
+					}
+					
+					var mixState2 = toState1 + " | " + toState2;
+					automatusInfo.states[mixState2] = getStateInfo(toState1, toState2);
+
+					automatusInfo.transitions.push([mixState1, trans1, mixState2]);
+				}
+				
+				for (var trans2 in currentInfo._transitions[state2]) {
+					var toState1 = state1;
+					var toState2 = Object.keys(currentInfo._transitions[state2][trans2])[0];
+					if (automatusForParallelBuffer._transitions[state1][trans2]) {
+						toState1 = automatusForParallelBuffer._transitions[state1][trans2];
+					}
+					
+					var mixState2 = toState1 + " | " + toState2;
+					automatusInfo.states[mixState2] = getStateInfo(toState1, toState2);
+
+					automatusInfo.transitions.push([mixState1, trans1, mixState2]);
+				}
+			}
+		}
+		
+		drawAutomatus(automatusInfo);
+		drawAutomatus(getInfoOpeAcc());
+	} else {
+		automatusForParallelBuffer = getCurrentInfo();
 		clearAutomatus();
 	}
 }

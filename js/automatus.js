@@ -58,6 +58,9 @@ function fillNFABySpec(spec) {
 					automatusInfo['states'][state]['initial'] = true;
 				} else if (lineSplit[2] == "-f") {
 					automatusInfo['states'][state]['final'] = true;
+				} else if (lineSplit[2] == "-if") {
+					automatusInfo['states'][state]['initial'] = true;
+					automatusInfo['states'][state]['final'] = true;
 				}
 			}
 		} else if (lineSplit[0] == "t") {
@@ -134,6 +137,35 @@ function drawAutomatus(automatusInfo) {
 			nfaview.states[state].position = new Vector(centerVector.x + radiusSize * (Math.cos(radians)), centerVector.y + radiusSize * (Math.sin(radians)));
 		}
 	}
+}
+
+function getCurrentInfo() {
+	var automatusInfo = {'states': {}, 'transitions': [], '_transitions': {}};
+	
+	for (var state in nfa.states) {
+		automatusInfo.states[state] = {'initial': (state == nfa.startState), 'final': nfa.accept[state]};
+	}
+	
+	var _transitions = automatusInfo['_transitions'];
+	
+	for (var fromTran in nfa.transitions) {
+		for (var viaTran in nfa.transitions[fromTran]) {
+			for (var toTran in nfa.transitions[fromTran][viaTran]) {
+				automatusInfo['transitions'].push([fromTran, viaTran, toTran]);
+				
+				if (!_transitions[fromTran]) {
+					_transitions[fromTran] = {};
+					_transitions[fromTran][viaTran] = {};
+				} else if (!_transitions[fromTran][viaTran]) {
+					_transitions[fromTran][viaTran] = {};
+				}
+				
+				_transitions[fromTran][viaTran][toTran] = true;
+			}
+		}
+	}
+	
+	return automatusInfo;
 }
 
 function getInfoOpeAcc() {
@@ -220,4 +252,14 @@ function operationTrim() {
 	}
 
 	drawAutomatus(automatusInfo);
+}
+
+var automatusForProductBuffer = null;
+function operationProduct() {
+	if (automatusForProductBuffer) {
+		var currentInfo = getCurrentInfo();
+	} else {
+		automatusForProductBuffer = getCurrentInfo();
+		clearAutomatus();
+	}
 }

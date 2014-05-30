@@ -344,35 +344,55 @@ function operationParallel() {
 			return stateInfo;
 		}
 		
+		// Necessário para montar o alfabeto de cada automato
+		var allTrans1 = {};
+		var allTrans2 = {};
+		for (var state1 in automatusForParallelBuffer.states) {
+			for (var trans1 in automatusForParallelBuffer._transitions[state1]) {
+				allTrans1[trans1] = true;
+			}
+		}
+		for (var state2 in currentInfo.states) {
+			for (var trans2 in currentInfo._transitions[state2]) {
+				allTrans2[trans2] = true;
+			}
+		}
+		
 		for (var state1 in automatusForParallelBuffer.states) {
 			for (var state2 in currentInfo.states) {
 				var mixState1 = state1 + " | " + state2;
 				automatusInfo.states[mixState1] = getStateInfo(state1, state2);
 				
+				var allTrans = {};
+				
 				for (var trans1 in automatusForParallelBuffer._transitions[state1]) {
-					var toState1 = Object.keys(automatusForParallelBuffer._transitions[state1][trans1])[0];
-					var toState2 = state2;
-					if (currentInfo._transitions[state2][trans1]) {
-						toState2 = currentInfo._transitions[state2][trans1];
-					}
-					
-					var mixState2 = toState1 + " | " + toState2;
-					automatusInfo.states[mixState2] = getStateInfo(toState1, toState2);
-
-					automatusInfo.transitions.push([mixState1, trans1, mixState2]);
+					allTrans[trans1] = true;
+				}
+				for (var trans2 in currentInfo._transitions[state2]) {
+					allTrans[trans2] = true;
 				}
 				
-				for (var trans2 in currentInfo._transitions[state2]) {
+				for (var trans in allTrans) {
 					var toState1 = state1;
-					var toState2 = Object.keys(currentInfo._transitions[state2][trans2])[0];
-					if (automatusForParallelBuffer._transitions[state1][trans2]) {
-						toState1 = automatusForParallelBuffer._transitions[state1][trans2];
+					var toState2 = state2;
+					
+					if (automatusForParallelBuffer._transitions[state1][trans]) {
+						toState1 = Object.keys(automatusForParallelBuffer._transitions[state1][trans])[0];
+					} else if (allTrans1[trans]) {
+						// Continua o for pq o alfabeto do primeiro automato possui o evento
+						continue;
+					}
+					if (currentInfo._transitions[state2][trans]) {
+						toState2 = Object.keys(currentInfo._transitions[state2][trans])[0];
+					} else if (allTrans2[trans]) {
+						// Continua o for pq o alfabeto do segundo automato possui o evento
+						continue;
 					}
 					
 					var mixState2 = toState1 + " | " + toState2;
 					automatusInfo.states[mixState2] = getStateInfo(toState1, toState2);
 
-					automatusInfo.transitions.push([mixState1, trans1, mixState2]);
+					automatusInfo.transitions.push([mixState1, trans, mixState2]);
 				}
 			}
 		}

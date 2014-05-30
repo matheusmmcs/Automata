@@ -184,14 +184,22 @@ function getInfoOpeAcc() {
 			for (var key2 in fromState[key]) {
 				if (!automatusInfo['states'][key2]) {
 					automatusInfo['states'][key2] = {'initial': false, 'final': nfa.accept[key2]};  
-					automatusInfo['transitions'].push([state, key, key2]);
-					
 					addReachables(key2);
 				}
 			}
 		}
 	}
 	addReachables(startState);
+	
+	for (var state in automatusInfo.states) {
+		for (var viaTrans in nfa.transitions[state]) {
+			for (var toTrans in nfa.transitions[state][viaTrans]) {
+				if (automatusInfo.states[toTrans]) {
+					automatusInfo['transitions'].push([state, viaTrans, toTrans]);
+				}
+			}
+		}
+	}
 	
 	return automatusInfo;
 }
@@ -205,8 +213,6 @@ function getInfoOpeCoAcc() {
 				for (var toTran in nfa.transitions[fromTran][viaTran]) {
 					if (toTran == state && !automatusInfo['states'][fromTran]) {
 						automatusInfo['states'][fromTran] = {'initial': (nfa.startState == fromTran), 'final': false};
-						automatusInfo['transitions'].push([fromTran, viaTran, toTran]);
-						
 						addReachables(fromTran);
 					}
 				}
@@ -217,6 +223,16 @@ function getInfoOpeCoAcc() {
 	for (var finalState in nfa.accept) {
 		automatusInfo['states'][finalState] = {'initial': (nfa.startState == finalState), 'final': true};
 		addReachables(finalState);
+	}
+	
+	for (var state in automatusInfo.states) {
+		for (var viaTrans in nfa.transitions[state]) {
+			for (var toTrans in nfa.transitions[state][viaTrans]) {
+				if (automatusInfo.states[toTrans]) {
+					automatusInfo['transitions'].push([state, viaTrans, toTrans]);
+				}
+			}
+		}
 	}
 	
 	return automatusInfo;
@@ -280,14 +296,14 @@ function operationProduct() {
 		
 		for (var state1 in automatusForProductBuffer.states) {
 			for (var state2 in currentInfo.states) {
-				for (var trans1 in automatusForProductBuffer.transitions[state1]) {
-					if (currentInfo.transitions[state2][trans1]) {
-						var mixState1 = "( " + state1 + ", " + state2 + " )";
+				for (var trans1 in automatusForProductBuffer._transitions[state1]) {
+					if (currentInfo._transitions[state2][trans1]) {
+						var mixState1 = state1 + " | " + state2;
 						automatusInfo.states[mixState1] = getStateInfo(state1, state2);
 						
-						var toState1 = Object.keys(automatusForProductBuffer.transitions[state1][trans1])[0];
-						var toState2 = Object.keys(currentInfo.transitions[state2][trans1])[0];
-						var mixState2 = "( " + toState1 + ", " + toState2 + " )";
+						var toState1 = Object.keys(automatusForProductBuffer._transitions[state1][trans1])[0];
+						var toState2 = Object.keys(currentInfo._transitions[state2][trans1])[0];
+						var mixState2 = toState1 + " | " + toState2;
 						automatusInfo.states[mixState2] = getStateInfo(toState1, toState2);
 						
 						automatusInfo.transitions.push([mixState1, trans1, mixState2]);
@@ -297,6 +313,7 @@ function operationProduct() {
 		}
 		
 		drawAutomatus(automatusInfo);
+		drawAutomatus(getInfoOpeAcc());
 	} else {
 		automatusForProductBuffer = getCurrentInfo();
 		clearAutomatus();

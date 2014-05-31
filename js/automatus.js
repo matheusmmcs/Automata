@@ -630,9 +630,6 @@ function getAllReachableStates(start, nodes, fn) {
     }
 }
 
-
-
-
 function getUniqueState(states, charSplit){
 	var res = "", avoidRepeat = {};
 	for(var i in states){
@@ -666,3 +663,96 @@ function getStateConfiguration(state, cStates, charSplit){
 	}
 	return {'initial':ini, 'final':fin};
 }
+
+//minimization
+/**
+
+P := {{todos estados de aceitação}, {todos estados de não-aceitação}};
+Q := {{todos estados de aceitação}};
+while (Q é não-vazio) do
+     escolha e remova um conjunto A de Q
+     for each c in ∑ do
+          let X é o conjunto de estados para o qual uma transição sobre c leva a um estado em A
+          for each conjunto Y in P para o qual X ∩ Y é não-vazio do
+               substitua Y em P pelos dois conjuntos X ∩ Y e Y \ X
+               if Y está contido em Q
+                    substitua Y em Q pelos mesmos dois conjuntos
+               else
+                    adicione o menor dos dois conjuntos à Q
+          end;
+     end;
+end;
+
+*/
+function hopcroft(){
+	var cAutomatus = getCurrentInfo(),
+		cStates = cAutomatus['states'],
+		cTransitions = cAutomatus['_transitions'];
+
+		//construindo o alfabeto
+		var alphabet = {};
+		for (var s in cStates) {
+			for (var t in cTransitions[s]) {
+				alphabet[t] = true;
+			}
+		}
+
+		//P := {{todos estados de aceitação}, {todos estados de não-aceitação}};
+		var P = getAllFinalStates(cStates, true).concat(getAllFinalStates(cStates, false));
+		//Q := {{todos estados de aceitação}};
+		var Q = getAllFinalStates(cStates, true);
+
+		console.log(cAutomatus, cTransitions)
+
+		//while (Q é não-vazio) do
+		while(Q.length != 0){
+			//escolha e remova um conjunto A de Q
+			var A = Q.pop();
+			//for each c in ∑ do
+			for(var c in alphabet){
+				//X é o conjunto de estados para o qual uma transição sobre c leva a um estado em A
+				var X = [];
+				for(var x in cAutomatus['transitions']){
+					var transition = cAutomatus['transitions'][x];
+					console.log(c, A)
+					if(transition[1] == c && transition[2] == A){
+						X.push(transition[0]);
+					}
+				}
+
+				//for each conjunto Y in P para o qual X ∩ Y é não-vazio do
+				var Y = [];
+				for(var y in P){
+
+				}
+
+
+
+				//let X é o conjunto de estados para o qual uma transição sobre c leva a um estado em A
+          //for each conjunto Y in P para o qual X ∩ Y é não-vazio do
+               //substitua Y em P pelos dois conjuntos X ∩ Y e Y \ X
+               //if Y está contido em Q
+                    //substitua Y em Q pelos mesmos dois conjuntos
+               //else
+                    //adicione o menor dos dois conjuntos à Q
+			}
+		}
+}
+
+function getAllFinalStates(cStates, cFinal){
+	var states = [];
+	for(var s in cStates){
+		if(cFinal){
+			if(cStates[s]['final'] == true){
+				states.push(s);
+			}
+		}else{
+			if(!cStates[s]['final']){
+				states.push(s);
+			}
+		}
+	}
+	return states;
+}
+
+//hopcroft();

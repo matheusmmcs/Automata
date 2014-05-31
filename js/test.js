@@ -39,7 +39,7 @@ var initX = 280;
 nfa.addState( 's1' );
 nfa.addState( 's2' );
 nfa.addTransition( 's', '0', 's' );
-nfa.addTransition( 's', '1', 's' );
+//nfa.addTransition( 's', '1', 's' );
 nfa.addTransition( 's', '1', 's1' );
 nfa.addTransition( 's1', '0', 's2' );
 nfa.addAcceptingState( 's2' );

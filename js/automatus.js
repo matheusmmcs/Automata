@@ -62,6 +62,8 @@ $(document).ready(function() {
 	});
 });
 
+var _EMPTY_TRANSITION = 'ε';
+
 function fillNFABySpec(spec) {
 	var specLines = spec.split("\n");
 	
@@ -92,7 +94,7 @@ function fillNFABySpec(spec) {
 			if (lineSplit.length == 4) {
 				automatusInfo['transitions'].push([state1, lineSplit[3], state2]);
 			} else {
-				automatusInfo['transitions'].push([state1, "ε", state2]);
+				automatusInfo['transitions'].push([state1, _EMPTY_TRANSITION, state2]);
 			}
 		}
 	}
@@ -162,11 +164,10 @@ function drawAutomatus(automatusInfo) {
 }
 
 function getCurrentInfo() {
-	var automatusInfo = {'states': {}, 'transitions': [], '_transitions': {}, 'statesLength': 0};
+	var automatusInfo = {'states': {}, 'transitions': [], '_transitions': {}};
 	
 	for (var state in nfa.states) {
 		automatusInfo.states[state] = {'initial': (state == nfa.startState), 'final': nfa.accept[state]};
-		automatusInfo.statesLength++;
 	}
 	
 	var _transitions = automatusInfo['_transitions'];
@@ -442,23 +443,15 @@ function auxClearOperationParallel() {
 	$(".operation-parallel a").text("Parallel Composition 1");
 }
 
+
+
 function operationAfnToAfd() {
 		var cAutomatus = getCurrentInfo(),
 			cStates = cAutomatus['states'],
 			cTransitions = cAutomatus['_transitions'];
 
-		console.log(cAutomatus, cTransitions);
-
-		var toVisit = [], visited = {};
-		var automata = {'states': {}, 'transitions': [], 'keepPositions': false};
-
-		//busca o no inicial
-		for(var i in cStates){
-			if(cStates[i] && cStates[i]['initial']){
-				toVisit.push(i);
-				break;
-			}
-		}
+		var toVisit = [], visited = {}, initial;
+		var automataNotEmpty = {'states': {}, 'transitions': [], 'keepPositions': false};
 
 		//construindo o alfabeto
 		var alphabet = {};
@@ -466,15 +459,115 @@ function operationAfnToAfd() {
 			for (var t in cTransitions[s]) {
 				alphabet[t] = true;
 			}
+
+			if(cStates[s] && cStates[s]['initial']){
+				initial = s;
+			}
 		}
 
+		//construindo a primeira tabela, que contem se é inicial/final, todoas as transicoes e os estados alcancaveis
+		var table1 = {};
+		for (var s in cStates) {
+			var state = cStates[s];
+
+			//todos as transicoes do alfabeto
+			for(var a in alphabet){
+
+				//se houver transicoes
+				if(cTransitions[s]){
+					for(var fs in cTransitions[s][a]){
+						if(!state[a]){
+							state[a] = [];
+						}
+						state[a].push(fs);
+					}
+				}
+			}
+
+			//estados alcancaveis (vazios)
+			var reachables = [];
+		    getAllReachableStates(s, cTransitions, function (n) {
+		        reachables.push(n);
+		    });
+
+		    state['reachables'] = reachables;
+		    table1[s] = state;
+		}
+
+		//estados alcancaveis (vazios)
+		var init = getUniqueState(table1[initial]['reachables'], "-");
+		toVisit.push(init);
+
+		//percorrendo a tabela 1 a partir do no incial, removendo todas as transicoes vazias
 		while(toVisit.length > 0){
 			var state = toVisit.pop();
 			visited[state] = true;
-			automata.states[state] = getStateConfiguration(state, cStates);
 
-			var states =  getStatesByUniqueState(state);
-			//caso seja um estado composto, percorro todos os estados, buscando as transicoes e os estados que atinge
+			//adiciona estado ao resultado
+			automataNotEmpty.states[state] = getStateConfiguration(state, cStates, "-");
+
+			//se for estado inicial, forçar que seja estado inicial
+			if(init == state){
+				automataNotEmpty.states[state]['initial'] = true;
+			}
+
+			var states =  getStatesByUniqueState(state, "-");
+
+			//todo alfabeto
+			for(var a in alphabet){
+				if(a != _EMPTY_TRANSITION){
+					var statesReachableOfA = [];
+
+				 	//todos os estados que foram aglomerados sao considerados
+				 	for(var s in states){
+				 		if(table1[states[s]][a]){
+				 			statesReachableOfA = statesReachableOfA.concat(table1[states[s]][a]);
+				 		}
+				 	}
+
+				 	for(var s in statesReachableOfA){
+				 		s = statesReachableOfA[s];
+				 		//adiciona a transicao no resultado final
+				 		var newState = getUniqueState(table1[s]['reachables'], "-");
+				 		automataNotEmpty.transitions.push([state, a, newState]);
+
+				 		if(!visited[newState]){
+				 			toVisit.push(newState);
+				 		}
+				 	}
+				}
+			}
+		}
+
+
+		drawAutomatus(automataNotEmpty);
+		cAutomatus = getCurrentInfo();
+		cStates = cAutomatus['states'];
+		cTransitions = cAutomatus['_transitions'];
+
+		//remover transicoes duplicadas
+		initial = null;
+		for (var s in cStates) {
+			if(cStates[s] && cStates[s]['initial']){
+				initial = s;
+			}
+		}
+
+		var automata = {'states': {}, 'transitions': [], 'keepPositions': false};
+		toVisit = [initial]; 
+		visited = {};
+
+
+		//iterar para evitar transicoes duplicadas
+		while(toVisit.length > 0){
+			var state = toVisit.pop();
+			visited[state] = true;
+			
+			automata.states[state] = getStateConfiguration(state, cStates, ";");
+
+			var states =  getStatesByUniqueState(state, ";");
+
+			//caso seja um estado composto, percorro todos os estados, buscando as transicoes e os estados que são atingidos
 			var transitions = {};
 			for(var s in states){
 				s = states[s];
@@ -491,40 +584,80 @@ function operationAfnToAfd() {
 				}
 			}
 
+
 			//itero as transicoes, inserindo estas transicoes no novo automato e verificando se os novos estados ja foram visitados
 			for(var t in transitions){
-				var newState = getUniqueState(transitions[t]);
+				var newState = getUniqueState(transitions[t], ";");
 				automata.transitions.push([state, t, newState]);
 
 				if(!visited[newState]){
 					toVisit.push(newState);
 				}
 			}
-			console.log(automata);
 		}
 
 		drawAutomatus(automata);
 }
 
-function getUniqueState(states){
-	var res = "";
+//operationAfnToAfd();
+
+//adaptacao de uma busca em largura que retorna todos os estados alcançaveis por estados vazios
+function getAllReachableStates(start, nodes, fn) {
+    var frontier = [start];
+    var level = 0, levels = {};
+
+    while (0 < frontier.length >>> 0) {
+        var next = [];
+        for (var i in frontier) {
+            var node = frontier[i];
+            levels[node] = level;
+            
+            fn(node);
+
+            for (var t in nodes[node]) {
+            	if(t == _EMPTY_TRANSITION){
+	            	for(var fs in nodes[node][t]){
+	            		//var adj = nodes[node][t];
+		                if (void(0) === levels[fs]) {
+		                    next.push(fs);
+		                }
+	            	}
+	            }
+            }
+        }
+        frontier = next;
+        level += 1;
+    }
+}
+
+
+
+
+function getUniqueState(states, charSplit){
+	var res = "", avoidRepeat = {};
+	for(var i in states){
+		avoidRepeat[states[i]] = true;
+	}
+
+	states = Object.keys(avoidRepeat);
 	states.sort();
+
 	for(var i in states){
 		res += states[i];
 		if(i < states.length-1){
-			res += "-";
+			res += charSplit;
 		}
 	}
 	return res;
 }
 
-function getStatesByUniqueState(uniqueState){
-	return uniqueState.split("-");;
+function getStatesByUniqueState(uniqueState, charSplit){
+	return uniqueState.split(charSplit);;
 }
 
-// s-s1-s2  ->  s, s1, s2
-function getStateConfiguration(state, cStates){
-	states = getStatesByUniqueState(state);
+// state no formato "s-s1-s2"
+function getStateConfiguration(state, cStates, charSplit){
+	states = getStatesByUniqueState(state, charSplit);
 	var ini = true, fin = false;
 	for(var i in states){
 		var s = cStates[states[i]];
@@ -533,5 +666,3 @@ function getStateConfiguration(state, cStates){
 	}
 	return {'initial':ini, 'final':fin};
 }
-
-//operationAfnToAfd();

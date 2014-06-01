@@ -17,20 +17,17 @@ $(document).ready(function() {
 	
 	specConfirm.click(function() {
 		var valueSpec = specArea.val();
-		specArea.val("");
 		
 		fillNFABySpec(valueSpec);
 	});
 	
 	// ### Credits ###
 	
-	var divCredits = $(".automatus-credits-area");
-	
-	$(".button.credits-area").click(function() {
-		if (divCredits.is(":visible")) {
-			divCredits.hide();
+	$(".credits-area").click(function() {
+		if ($(".credits-area-name:eq(0)").is(":visible")) {
+			$(".credits-area-name").slideUp();
 		} else {
-			divCredits.show();
+			$(".credits-area-name").slideDown();
 		}
 	});
 	
@@ -59,6 +56,10 @@ $(document).ready(function() {
 	// ### Operation - Product ###
 	$(".afn-afd").click(function() {
 		operationAfnToAfd();
+	});
+	
+	$(".minimization").click(function() {
+		operationMinimization();
 	});
 });
 
@@ -443,7 +444,98 @@ function auxClearOperationParallel() {
 	$(".operation-parallel a").text("Parallel Composition 1");
 }
 
-
+function operationMinimization() {
+	drawAutomatus(getInfoOpeAcc());
+	
+	var currentInfo = getCurrentInfo();
+	
+	var tableMarkup = {};
+	for (var state1 in currentInfo.states) {
+		for (var state2 in currentInfo.states) {
+			if (state1 == state2) {
+				continue;
+			}
+			
+			if (!tableMarkup[state1]) {
+				tableMarkup[state1] = {};
+			}
+	
+			if ((nfa.accept[state1] && !nfa.accept[state2]) || (nfa.accept[state2] && !nfa.accept[state1])) {
+				tableMarkup[state1][state2] = true;
+			} else {
+				tableMarkup[state1][state2] = false;
+			}
+		}
+	}
+	
+	function testMarkup() {
+		var touched = false;
+		
+		for (var state1 in tableMarkup) {
+			for (var state2 in tableMarkup[state1]) {
+				if (tableMarkup[state1][state2]) {
+					continue;
+				}
+				for (var trans1 in currentInfo._transitions[state1]) {
+					var toState1 = Object.keys(currentInfo._transitions[state1][trans1])[0];
+					
+					if (currentInfo._transitions[state2][trans1]) {
+						var toState2 = Object.keys(currentInfo._transitions[state2][trans1])[0];
+						
+						if (tableMarkup[toState1][toState2]) {
+							tableMarkup[state1][state2] = true;
+							touched = true;
+						}
+					}
+				}
+			}
+		}
+		
+		if (touched) {
+			testMarkup();
+		}
+	}
+	
+	testMarkup();
+	
+	for (var state1 in tableMarkup) {
+		if (!currentInfo.states[state1]) {
+			continue;
+		}
+		for (var state2 in tableMarkup[state1]) {
+			if (!tableMarkup[state1][state2]) {
+				for (var fromState in currentInfo._transitions) {
+					for (var transState in currentInfo._transitions[fromState]) {
+						for (var toState in currentInfo._transitions[fromState][transState]) {
+							if (state2 == toState) {
+								delete currentInfo._transitions[fromState][transState][toState];
+								
+								currentInfo._transitions[fromState][transState][state1] = true;
+							}
+						}
+					}
+				}
+				
+				delete currentInfo._transitions[state2]
+				delete currentInfo.states[state2];
+			}
+		}
+	}
+	
+	var newTransitions = [];
+	
+	for (var fromState in currentInfo._transitions) {
+		for (var transState in currentInfo._transitions[fromState]) {
+			for (var toState in currentInfo._transitions[fromState][transState]) {
+				newTransitions.push([fromState, transState, toState]);
+			}
+		}
+	}
+	
+	currentInfo.transitions = newTransitions;
+	
+	drawAutomatus(currentInfo);
+}
 
 function operationAfnToAfd() {
 		var cAutomatus = getCurrentInfo(),

@@ -3,6 +3,27 @@ var nfaview = new NFAView( nfa );
 
 var initX = 280;
 
+nfa.addState( 'B' );
+nfa.addState( 'C' );
+nfa.addState( 'D' );
+nfa.addState( 'E' );
+nfa.addTransition( 's', 'a', 'B' );
+nfa.addTransition( 's', 'b', 'C' );
+nfa.addTransition( 'B', 'a', 'B' );
+nfa.addTransition( 'B', 'b', 'D' );
+nfa.addTransition( 'C', 'a', 'B' );
+nfa.addTransition( 'C', 'b', 'C' );
+nfa.addTransition( 'D', 'a', 'B' );
+nfa.addTransition( 'D', 'b', 'E' );
+nfa.addTransition( 'E', 'a', 'B' );
+nfa.addTransition( 'E', 'b', 'C' );
+nfa.addAcceptingState( 'E' );
+nfaview.states[ 's' ].position = new Vector( initX + 200, 300 );
+nfaview.states[ 'B' ].position = new Vector( initX + 400, 300 );
+nfaview.states[ 'C' ].position = new Vector( initX + 400, 100 );
+nfaview.states[ 'D' ].position = new Vector( initX + 400, 500 );
+nfaview.states[ 'E' ].position = new Vector( initX + 800, 300 );
+
 // nfa.addState( 'q_1' );
 // nfa.addState( 'q_2' );
 // nfa.addState( 'q_3' );
@@ -36,16 +57,16 @@ var initX = 280;
 
 
 
-nfa.addState( 's1' );
-nfa.addState( 's2' );
-nfa.addTransition( 's', '0', 's' );
+//nfa.addState( 's1' );
+//nfa.addState( 's2' );
+//nfa.addTransition( 's', '0', 's' );
 //nfa.addTransition( 's', '1', 's' );
-nfa.addTransition( 's', '1', 's1' );
-nfa.addTransition( 's1', '0', 's2' );
-nfa.addAcceptingState( 's2' );
-nfaview.states[ 's' ].position = new Vector( initX + 250, 100 );
-nfaview.states[ 's1' ].position = new Vector( initX + 400, 200 );
-nfaview.states[ 's2' ].position = new Vector( initX + 400, 400 );
+//nfa.addTransition( 's', '1', 's1' );
+//nfa.addTransition( 's1', '0', 's2' );
+//nfa.addAcceptingState( 's2' );
+//nfaview.states[ 's' ].position = new Vector( initX + 250, 100 );
+//nfaview.states[ 's1' ].position = new Vector( initX + 400, 200 );
+//nfaview.states[ 's2' ].position = new Vector( initX + 400, 400 );
 
 
 

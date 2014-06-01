@@ -37,6 +37,9 @@
             <h1>Extras</h1>
             <ol class='toolbar'>
                 <li class='credits-area'><a href='#'><i class="fa fa-group"></i> Credits</a></li>
+                <li class='credits-area-name' style="display:none"><a href='#'><i class="fa fa-group"></i> Pedro Almir</a></li>
+                <li class='credits-area-name' style="display:none"><a href='#'><i class="fa fa-group"></i> Matheus Campanha&#771;</a></li>
+                <li class='credits-area-name' style="display:none"><a href='#'><i class="fa fa-group"></i> Jefferson Henrique</a></li>
             </ol>
         </aside>
 
@@ -52,12 +55,6 @@ t s1 s2
             </textarea>
             <span class='spec-area-confirm'><a href='#' class="btn"><span></span>Confirm</a></span>
         </div>
-        <div class="automatus-credits-area">
-            <img src="images/pedro.jpg"/><span>Pedro</span>
-            <img src="images/matheus.jpg"/><span>Matheus</span>
-            <img src="images/jeff.jpg"/><span>Jefferson</span>
-        </div>
-        
 
         <div class='runner'>
             <div class='window'>
